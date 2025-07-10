@@ -1,0 +1,9 @@
+# Ignore Terraform local state & providers
+.terraform/
+*.tfstate
+*.tfstate.backup
+crash.log
+
+# Ignore binary files
+*.zip
+*.exe
