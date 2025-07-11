@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Animal App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    input {
+      width: 70%;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin-left: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+
+    li {
+      background: #fff;
+      padding: 10px;
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 5px;
+    }
+
+    .delete-btn {
+      background: #ff5b5b;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Animal List</h1>
+  
+  <input id="animalInput" placeholder="Enter animal name" />
+  <button onclick="addAnimal()">Add</button>
+  
+  <ul id="animalList"></ul>
+
+  <script>
+    async function fetchAnimals() {
+      const res = await fetch('/animals');
+      const data = await res.json();
+      const list = document.getElementById('animalList');
+      list.innerHTML = '';
+      data.forEach((animal, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          ${animal}
+          <button class="delete-btn" onclick="deleteAnimal(${index})">Delete</button>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    async function addAnimal() {
+      const name = document.getElementById('animalInput').value;
+      if (!name.trim()) return;
+      await fetch('/animals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ names: name })
+      });
+      document.getElementById('animalInput').value = '';
+      fetchAnimals();
+    }
+
+    async function deleteAnimal(index) {
+      await fetch(`/animals/${index}`, {
+        method: 'DELETE'
+      });
+      fetchAnimals();
+    }
+
+    fetchAnimals();
+  </script>
+</body>
+</html>
